@@ -158,9 +158,21 @@ if (existingContent) {
     quill.clipboard.dangerouslyPasteHTML(existingContent);
 }
 
-// Update hidden textarea on form submit
-document.querySelector('form').addEventListener('submit', function() {
+// Update hidden textarea whenever Quill content changes
+quill.on('text-change', function(delta, oldDelta, source) {
     document.getElementById('template_content').value = quill.root.innerHTML;
+});
+
+// Update hidden textarea on form submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    // Get the HTML content from Quill editor
+    var htmlContent = quill.root.innerHTML;
+
+    // Update the hidden textarea
+    document.getElementById('template_content').value = htmlContent;
+
+    // Debug: Log to console to verify content is being captured
+    console.log('Quill content being saved:', htmlContent.substring(0, 100) + '...');
 });
 
 // Insert variable buttons

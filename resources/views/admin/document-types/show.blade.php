@@ -367,6 +367,34 @@
         </div>
     </div>
 
+    <!-- Template Preview Section -->
+    @if($documentType->template_content)
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-eye"></i> Template Preview</h5>
+            <div>
+                <button class="btn btn-sm btn-light" onclick="printPreview()">
+                    <i class="fas fa-print"></i> Print Preview
+                </button>
+                <a href="{{ route('barangay.document-types.template', $documentType) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i> Edit Template
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <!-- Paper preview container -->
+            <div class="template-preview-container">
+                <div class="paper-preview" id="template-preview">
+                    {!! $documentType->getRenderedTemplate() !!}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <small><i class="fas fa-info-circle"></i> This is a preview with sample data. Actual documents will use resident information.</small>
+        </div>
+    </div>
+    @endif
+
     <!-- Recent Requests -->
     @if(isset($recentRequests) && $recentRequests->count() > 0)
     <div class="card mt-4">
@@ -414,4 +442,159 @@
     </div>
     @endif
 </div>
+
+@push('styles')
+<style>
+    /* Template Preview Styling */
+    .template-preview-container {
+        background: #e5e5e5;
+        padding: 40px;
+        min-height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .paper-preview {
+        background: white;
+        width: 8.5in;
+        min-height: 11in;
+        padding: 1in;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    /* Quill content styling in preview */
+    .paper-preview p {
+        margin: 0 0 10px 0;
+        text-align: justify;
+        white-space: pre-wrap;
+    }
+
+    .paper-preview .ql-indent-1 {
+        text-indent: 50px;
+    }
+
+    .paper-preview .ql-indent-2 {
+        text-indent: 100px;
+    }
+
+    .paper-preview .ql-align-center {
+        text-align: center;
+        text-indent: 0;
+    }
+
+    .paper-preview .ql-align-right {
+        text-align: right;
+        text-indent: 0;
+    }
+
+    .paper-preview .ql-align-left {
+        text-align: left;
+        text-indent: 0;
+    }
+
+    .paper-preview .ql-align-justify {
+        text-align: justify;
+    }
+
+    .paper-preview blockquote {
+        border: none;
+        padding-left: 0;
+        margin: 0 0 10px 0;
+        text-indent: 50px;
+        text-align: justify;
+    }
+
+    .paper-preview strong {
+        font-weight: bold;
+    }
+
+    .paper-preview em {
+        font-style: italic;
+    }
+
+    .paper-preview u {
+        text-decoration: underline;
+    }
+
+    /* Print styles */
+    @media print {
+        .template-preview-container {
+            background: white;
+            padding: 0;
+        }
+
+        .paper-preview {
+            box-shadow: none;
+            margin: 0;
+        }
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    function printPreview() {
+        const printContent = document.getElementById('template-preview').innerHTML;
+        const printWindow = window.open('', '_blank');
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Template Preview - {{ $documentType->name }}</title>
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 0;
+                    }
+                    body {
+                        font-family: 'Times New Roman', Times, serif;
+                        font-size: 12pt;
+                        line-height: 1.5;
+                        padding: 1in;
+                        margin: 0;
+                    }
+                    p {
+                        margin: 0 0 10px 0;
+                        text-align: justify;
+                        white-space: pre-wrap;
+                    }
+                    .ql-indent-1 { text-indent: 50px; }
+                    .ql-indent-2 { text-indent: 100px; }
+                    .ql-align-center { text-align: center; text-indent: 0; }
+                    .ql-align-right { text-align: right; text-indent: 0; }
+                    .ql-align-left { text-align: left; text-indent: 0; }
+                    .ql-align-justify { text-align: justify; }
+                    blockquote {
+                        border: none;
+                        padding-left: 0;
+                        margin: 0 0 10px 0;
+                        text-indent: 50px;
+                        text-align: justify;
+                    }
+                    strong { font-weight: bold; }
+                    em { font-style: italic; }
+                    u { text-decoration: underline; }
+                </style>
+            </head>
+            <body>
+                ${printContent}
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+        printWindow.focus();
+
+        setTimeout(function() {
+            printWindow.print();
+        }, 500);
+    }
+</script>
+@endpush
+
 @endsection

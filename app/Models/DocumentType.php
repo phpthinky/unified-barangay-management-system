@@ -231,4 +231,56 @@ class DocumentType extends Model
 
         return round($totalDays / $completed->count(), 1);
     }
+
+    /**
+     * Get rendered template with sample data for preview.
+     */
+    public function getRenderedTemplate()
+    {
+        if (!$this->template_content) {
+            return '<p class="text-muted text-center py-5">No template configured. Click "Edit Template" to create one.</p>';
+        }
+
+        // Sample data for template preview
+        $sampleData = [
+            '[NAME]' => 'JUAN DELA CRUZ',
+            '[ADDRESS]' => 'Purok 1, Barangay Poblacion',
+            '[BIRTHDAY]' => 'January 15, 1990',
+            '[BIRTHDATE]' => 'January 15, 1990',
+            '[DATE_OF_BIRTH]' => 'January 15, 1990',
+            '[PLACE_OF_BIRTH]' => 'Sablayan, Occidental Mindoro',
+            '[AGE]' => '34',
+            '[SEX]' => 'Male',
+            '[GENDER]' => 'Male',
+            '[CIVIL_STATUS]' => 'Married',
+            '[BARANGAY]' => 'Poblacion',
+            '[BARANGAY_NAME]' => 'Poblacion',
+            '[DATE]' => now()->format('F d, Y'),
+            '[CURRENT_DATE]' => now()->format('F d, Y'),
+            '[ISSUE_DATE]' => now()->format('F d, Y'),
+            '[PURPOSE]' => 'Employment purposes',
+            '[BARANGAY_CAPTAIN]' => 'MARIA SANTOS',
+            '[PUNONG_BARANGAY]' => 'MARIA SANTOS',
+            '[CAPTAIN_NAME]' => 'MARIA SANTOS',
+            '[KAGAWAD]' => 'PEDRO REYES',
+            '[SECRETARY]' => 'ROSA GARCIA',
+            '[TREASURER]' => 'JOSE MARTINEZ',
+        ];
+
+        // Add custom form fields from this document type
+        if ($this->form_fields && is_array($this->form_fields)) {
+            foreach ($this->form_fields as $field) {
+                $fieldName = '[' . strtoupper($field['name'] ?? '') . ']';
+                $sampleData[$fieldName] = 'Sample ' . ($field['label'] ?? 'Data');
+            }
+        }
+
+        // Replace placeholders with sample data
+        $rendered = $this->template_content;
+        foreach ($sampleData as $placeholder => $value) {
+            $rendered = str_replace($placeholder, $value, $rendered);
+        }
+
+        return $rendered;
+    }
 }

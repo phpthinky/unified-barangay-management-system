@@ -206,10 +206,15 @@ class DocumentTypeController extends Controller
 
         // Clean up the HTML content if needed
         $templateContent = $validated['template_content'] ?? null;
-        
-        // If template is empty or just whitespace, set to null
-        if ($templateContent && trim(strip_tags($templateContent)) === '') {
-            $templateContent = null;
+
+        // If template is empty or just whitespace (but preserve formatting tags), set to null
+        // Only check if content has actual text, not just Quill's default empty <p><br></p>
+        if ($templateContent) {
+            $cleanText = trim(strip_tags($templateContent));
+            // If completely empty or only has default Quill placeholder
+            if ($cleanText === '' && !preg_match('/\[([A-Z_]+)\]/', $templateContent)) {
+                $templateContent = null;
+            }
         }
 
         $documentType->update([

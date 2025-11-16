@@ -53,13 +53,14 @@
 </div>
 
                         <div class="alert alert-info mb-3">
-                            <strong><i class="fas fa-info-circle"></i> Formatting Tips:</strong>
+                            <strong><i class="fas fa-info-circle"></i> Document Editor Tips (Works like MS Word):</strong>
                             <ul class="mb-0 mt-2">
-                                <li><strong>Paragraph Indent:</strong> Use the <i class="fas fa-indent"></i> button for left indentation</li>
-                                <li><strong>Text Indent (50px):</strong> Use the blockquote button (<i class="fas fa-quote-left"></i>) for formal paragraph indents</li>
-                                <li><strong>Spacing:</strong> Press Enter twice for double spacing between sections</li>
-                                <li><strong>Alignment:</strong> Use align buttons for center, left, right, or justify</li>
-                                <li><strong>Variables:</strong> Type variables in UPPERCASE with square brackets: [NAME], [ADDRESS]</li>
+                                <li><strong>Spacebar:</strong> Works normally - multiple spaces are preserved</li>
+                                <li><strong>Paragraph Indent:</strong> Click the indent button <i class="fas fa-indent"></i> for 50px text indent (formal style)</li>
+                                <li><strong>Enter Key:</strong> Creates new paragraph (press Enter once or twice for spacing)</li>
+                                <li><strong>Alignment:</strong> Default is justified (like formal documents), use toolbar to change</li>
+                                <li><strong>Font:</strong> Times New Roman 12pt (standard document format)</li>
+                                <li><strong>Variables:</strong> Type in UPPERCASE with brackets: [NAME], [ADDRESS], [DATE]</li>
                             </ul>
                         </div>
 
@@ -130,63 +131,102 @@
 <!-- Quill CSS -->
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 <style>
+    /* Word-like document editor styling */
     .ql-editor {
-        min-height: 500px;
+        min-height: 600px;
         font-family: 'Times New Roman', Times, serif;
-        font-size: 14px;
-        line-height: 1.8;
-        padding: 30px;
+        font-size: 12pt;
+        line-height: 1.5;
+        padding: 1in;
         background: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        white-space: pre-wrap !important;  /* Preserve spaces like Word */
+        word-wrap: break-word;
     }
+
     .ql-container {
-        font-size: 14px;
+        font-size: 12pt;
+        border: none !important;
     }
 
-    /* Better paragraph spacing */
+    /* Word-like paragraph behavior */
     .ql-editor p {
-        margin: 0 0 15px 0;
-        line-height: 1.8;
-    }
-
-    /* Indented paragraphs using blockquote */
-    .ql-editor blockquote {
-        border-left: none;
-        padding-left: 50px;
-        margin: 0 0 15px 0;
+        margin: 0;
+        line-height: 1.5;
+        text-align: justify;  /* Default justify like formal documents */
         text-indent: 0;
     }
 
-    /* Manual text indent for first line of paragraph */
+    /* Add spacing between paragraphs (like pressing Enter in Word) */
+    .ql-editor p + p {
+        margin-top: 0;
+    }
+
+    /* Indented paragraphs (50px text-indent) */
+    .ql-editor blockquote {
+        border-left: none;
+        padding-left: 0;
+        margin: 0;
+        text-indent: 50px;
+        text-align: justify;
+    }
+
+    /* Alternative: Use indent-1 for text-indent */
     .ql-editor .ql-indent-1 {
-        padding-left: 3em;
+        text-indent: 50px;
+        padding-left: 0;
     }
 
     .ql-editor .ql-indent-2 {
-        padding-left: 6em;
+        text-indent: 100px;
+        padding-left: 0;
     }
 
-    .ql-editor .ql-indent-3 {
-        padding-left: 9em;
-    }
-
-    /* Alignment */
+    /* Alignment overrides */
     .ql-editor .ql-align-center {
         text-align: center;
+        text-indent: 0;
     }
 
     .ql-editor .ql-align-right {
         text-align: right;
+        text-indent: 0;
+    }
+
+    .ql-editor .ql-align-left {
+        text-align: left;
+        text-indent: 0;
     }
 
     .ql-editor .ql-align-justify {
         text-align: justify;
     }
 
-    /* Better spacing for multiple line breaks */
-    .ql-editor br + br {
+    /* Preserve multiple spaces */
+    .ql-editor * {
+        white-space: pre-wrap !important;
+    }
+
+    /* Line breaks should create actual space */
+    .ql-editor br {
         display: block;
         content: "";
-        margin-top: 10px;
+        line-height: 1.5;
+    }
+
+    /* Bold, italic, underline preserve spacing */
+    .ql-editor strong,
+    .ql-editor em,
+    .ql-editor u {
+        white-space: pre-wrap;
+    }
+
+    /* Paper-like appearance */
+    #editor-container {
+        background: #f5f5f5;
+        padding: 20px;
+        border-radius: 4px;
     }
 </style>
 @endpush
@@ -252,7 +292,7 @@ document.getElementById('load-sample-template')?.addEventListener('click', funct
         return;
     }
 
-    // Simple Quill-formatted template using blockquotes for indentation
+    // Word-like formatted template with proper indentation
     const sampleTemplate = `<p class="ql-align-center"><strong>Republic of the Philippines</strong></p>
 <p class="ql-align-center"><strong>Province of Occidental Mindoro</strong></p>
 <p class="ql-align-center"><strong>Municipality of Sablayan</strong></p>
@@ -263,13 +303,13 @@ document.getElementById('load-sample-template')?.addEventListener('click', funct
 <p><br></p>
 <p><strong>TO WHOM IT MAY CONCERN:</strong></p>
 <p><br></p>
-<blockquote>This is to certify that <strong>[NAME]</strong>, <strong>[AGE]</strong> years old, <strong>[CIVIL_STATUS]</strong>, a resident of <strong>[ADDRESS]</strong>, Barangay [BARANGAY], Sablayan, Occidental Mindoro, is personally known to me to be of good moral character and a law-abiding citizen of this barangay.</blockquote>
+<p class="ql-indent-1">This is to certify that <strong>[NAME]</strong>, <strong>[AGE]</strong> years old, <strong>[CIVIL_STATUS]</strong>, a resident of <strong>[ADDRESS]</strong>, Barangay [BARANGAY], Sablayan, Occidental Mindoro, is personally known to me to be of good moral character and a law-abiding citizen of this barangay.</p>
 <p><br></p>
-<blockquote>This further certifies that he/she has no pending criminal case filed in this barangay and has no derogatory record on file.</blockquote>
+<p class="ql-indent-1">This further certifies that he/she has no pending criminal case filed in this barangay and has no derogatory record on file.</p>
 <p><br></p>
-<blockquote>This certification is issued upon the request of the above-named person for <strong>[PURPOSE]</strong> purposes and whatever legal purposes it may serve.</blockquote>
+<p class="ql-indent-1">This certification is issued upon the request of the above-named person for <strong>[PURPOSE]</strong> purposes and whatever legal purposes it may serve.</p>
 <p><br></p>
-<blockquote>Issued this <strong>[DATE]</strong> at Barangay [BARANGAY], Sablayan, Occidental Mindoro, Philippines.</blockquote>
+<p class="ql-indent-1">Issued this <strong>[DATE]</strong> at Barangay [BARANGAY], Sablayan, Occidental Mindoro, Philippines.</p>
 <p><br></p>
 <p><br></p>
 <p class="ql-align-right">Certified by:</p>
@@ -384,7 +424,7 @@ document.getElementById('load-sample-template')?.addEventListener('click', funct
     */
 
     quill.clipboard.dangerouslyPasteHTML(sampleTemplate);
-    alert('Sample template loaded! Use the blockquote button for paragraph indents. Customize for your barangay.');
+    alert('Sample template loaded!\n\nThe editor works like MS Word:\n• Spacebar creates actual spaces\n• Use the INDENT button for 50px paragraph indents\n• Text is justified by default\n• Customize for your barangay!');
 });
 
 // Clear Template

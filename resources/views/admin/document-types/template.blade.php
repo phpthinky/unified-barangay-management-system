@@ -52,6 +52,17 @@
     @enderror
 </div>
 
+                        <div class="alert alert-info mb-3">
+                            <strong><i class="fas fa-info-circle"></i> Formatting Tips:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li><strong>Paragraph Indent:</strong> Use the <i class="fas fa-indent"></i> button for left indentation</li>
+                                <li><strong>Text Indent (50px):</strong> Use the blockquote button (<i class="fas fa-quote-left"></i>) for formal paragraph indents</li>
+                                <li><strong>Spacing:</strong> Press Enter twice for double spacing between sections</li>
+                                <li><strong>Alignment:</strong> Use align buttons for center, left, right, or justify</li>
+                                <li><strong>Variables:</strong> Type variables in UPPERCASE with square brackets: [NAME], [ADDRESS]</li>
+                            </ul>
+                        </div>
+
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Template
@@ -123,9 +134,59 @@
         min-height: 500px;
         font-family: 'Times New Roman', Times, serif;
         font-size: 14px;
+        line-height: 1.8;
+        padding: 30px;
+        background: white;
     }
     .ql-container {
         font-size: 14px;
+    }
+
+    /* Better paragraph spacing */
+    .ql-editor p {
+        margin: 0 0 15px 0;
+        line-height: 1.8;
+    }
+
+    /* Indented paragraphs using blockquote */
+    .ql-editor blockquote {
+        border-left: none;
+        padding-left: 50px;
+        margin: 0 0 15px 0;
+        text-indent: 0;
+    }
+
+    /* Manual text indent for first line of paragraph */
+    .ql-editor .ql-indent-1 {
+        padding-left: 3em;
+    }
+
+    .ql-editor .ql-indent-2 {
+        padding-left: 6em;
+    }
+
+    .ql-editor .ql-indent-3 {
+        padding-left: 9em;
+    }
+
+    /* Alignment */
+    .ql-editor .ql-align-center {
+        text-align: center;
+    }
+
+    .ql-editor .ql-align-right {
+        text-align: right;
+    }
+
+    .ql-editor .ql-align-justify {
+        text-align: justify;
+    }
+
+    /* Better spacing for multiple line breaks */
+    .ql-editor br + br {
+        display: block;
+        content: "";
+        margin-top: 10px;
     }
 </style>
 @endpush
@@ -135,19 +196,22 @@
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 <script>
-// Initialize Quill
+// Initialize Quill with enhanced formatting options
 var quill = new Quill('#editor-container', {
     theme: 'snow',
     modules: {
         toolbar: [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'size': ['small', false, 'large', 'huge'] }],  // Font size
             ['bold', 'italic', 'underline', 'strike'],
+            [{ 'script': 'sub'}, { 'script': 'super' }],      // Subscript/Superscript
+            [{ 'color': [] }, { 'background': [] }],          // Text color and background
             [{ 'align': [] }],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
             [{ 'indent': '-1'}, { 'indent': '+1' }],
-            ['link', 'image'],
-            ['clean'],
-            ['code-block']
+            ['blockquote'],                                    // Blockquote for indented text
+            ['link'],
+            ['clean']
         ]
     }
 });
@@ -182,13 +246,42 @@ function insertVariable(variable) {
     quill.setSelection(cursorPosition + variable.length);
 }
 
-// Load Sample Template
+// Load Sample Template (Quill-formatted version)
 document.getElementById('load-sample-template')?.addEventListener('click', function() {
     if (quill.getText().trim() && !confirm('This will replace the current template. Continue?')) {
         return;
     }
-    
-    const sampleTemplate = `<!DOCTYPE html>
+
+    // Simple Quill-formatted template using blockquotes for indentation
+    const sampleTemplate = `<p class="ql-align-center"><strong>Republic of the Philippines</strong></p>
+<p class="ql-align-center"><strong>Province of Occidental Mindoro</strong></p>
+<p class="ql-align-center"><strong>Municipality of Sablayan</strong></p>
+<p class="ql-align-center"><strong style="font-size: 18px;">BARANGAY [BARANGAY]</strong></p>
+<p class="ql-align-center"><em>Office of the Punong Barangay</em></p>
+<p><br></p>
+<p class="ql-align-center"><strong><u style="font-size: 20px;">BARANGAY CLEARANCE</u></strong></p>
+<p><br></p>
+<p><strong>TO WHOM IT MAY CONCERN:</strong></p>
+<p><br></p>
+<blockquote>This is to certify that <strong>[NAME]</strong>, <strong>[AGE]</strong> years old, <strong>[CIVIL_STATUS]</strong>, a resident of <strong>[ADDRESS]</strong>, Barangay [BARANGAY], Sablayan, Occidental Mindoro, is personally known to me to be of good moral character and a law-abiding citizen of this barangay.</blockquote>
+<p><br></p>
+<blockquote>This further certifies that he/she has no pending criminal case filed in this barangay and has no derogatory record on file.</blockquote>
+<p><br></p>
+<blockquote>This certification is issued upon the request of the above-named person for <strong>[PURPOSE]</strong> purposes and whatever legal purposes it may serve.</blockquote>
+<p><br></p>
+<blockquote>Issued this <strong>[DATE]</strong> at Barangay [BARANGAY], Sablayan, Occidental Mindoro, Philippines.</blockquote>
+<p><br></p>
+<p><br></p>
+<p class="ql-align-right">Certified by:</p>
+<p><br></p>
+<p><br></p>
+<p><br></p>
+<p class="ql-align-right">_______________________________</p>
+<p class="ql-align-right"><strong>[BARANGAY_CAPTAIN]</strong></p>
+<p class="ql-align-right">Punong Barangay</p>`;
+
+    /* OLD COMPLEX HTML TEMPLATE - keeping for reference
+    const oldSampleTemplate = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -288,9 +381,10 @@ document.getElementById('load-sample-template')?.addEventListener('click', funct
     </div>
 </body>
 </html>`;
-    
+    */
+
     quill.clipboard.dangerouslyPasteHTML(sampleTemplate);
-    alert('Sample template loaded! Remember to customize it for your barangay.');
+    alert('Sample template loaded! Use the blockquote button for paragraph indents. Customize for your barangay.');
 });
 
 // Clear Template

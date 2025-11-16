@@ -367,6 +367,65 @@
         </div>
     </div>
 
+    <!-- Template Preview Section -->
+    @if($documentType->template_content)
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-eye"></i> Template Preview</h5>
+            <div>
+                <button class="btn btn-sm btn-light" onclick="printPreview()">
+                    <i class="fas fa-print"></i> Print Preview
+                </button>
+                <a href="{{ route('barangay.document-types.template', $documentType) }}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit"></i> Edit Template
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <!-- Paper preview container -->
+            <div class="template-preview-container">
+                <div class="paper-preview" id="template-preview">
+                    <!-- Official Header (matching printable.blade.php) -->
+                    <div class="official-header">
+                        <div class="barangay-seal">
+                            OFFICIAL SEAL<br>
+                            BARANGAY<br>
+                            POBLACION
+                        </div>
+                        <div class="header-content">
+                            <div class="header-title">
+                                <h2>REPUBLIC OF THE PHILIPPINES</h2>
+                                <h3>PROVINCE OF OCCIDENTAL MINDORO</h3>
+                                <h3>MUNICIPALITY OF SABLAYAN</h3>
+                                <h2>BARANGAY POBLACION</h2>
+                            </div>
+                            <h3 class="document-title"><u>{{ strtoupper($documentType->name) }}</u></h3>
+                        </div>
+                    </div>
+
+                    <!-- Document Content (the template) -->
+                    <div class="document-content">
+                        {!! $documentType->getRenderedTemplate() !!}
+                    </div>
+
+                    <!-- Official Stamp Area -->
+                    <div class="official-stamp-area">
+                        <div style="margin-bottom: 60px;"></div>
+                        <strong>MARIA SANTOS</strong><br>
+                        Punong Barangay<br>
+                        Barangay Poblacion<br>
+                        <span class="signature-line"></span>
+                        <p style="margin-top: 5px; font-size: 11px;">(Signature over Printed Name)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <small><i class="fas fa-info-circle"></i> This is a preview with sample data. Actual documents will use resident information.</small>
+        </div>
+    </div>
+    @endif
+
     <!-- Recent Requests -->
     @if(isset($recentRequests) && $recentRequests->count() > 0)
     <div class="card mt-4">
@@ -414,4 +473,307 @@
     </div>
     @endif
 </div>
+
+@push('styles')
+<style>
+    /* Template Preview Styling - Matching printable.blade.php exactly */
+    .template-preview-container {
+        background: #f8f9fa;
+        padding: 20px;
+        min-height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .paper-preview {
+        max-width: 210mm; /* A4 width */
+        min-height: 297mm; /* A4 height */
+        background: white;
+        padding: 20mm; /* Match @page margin from printable */
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 14px; /* Match printable.blade.php */
+        line-height: 1.4; /* Match printable.blade.php */
+        position: relative;
+    }
+
+    /* Official Header - Matching printable.blade.php */
+    .paper-preview .official-header {
+        margin-bottom: 25px;
+        border-bottom: 3px double #000;
+        padding-bottom: 15px;
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .paper-preview .barangay-seal {
+        width: 90px;
+        height: 90px;
+        border: 2px solid #000;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    .paper-preview .header-content {
+        flex: 1;
+        text-align: center;
+        padding-top: 5px;
+    }
+
+    .paper-preview .header-title {
+        margin: 0;
+        padding: 0;
+        line-height: 1.2;
+    }
+
+    .paper-preview .header-title h2 {
+        margin: 1px 0;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .paper-preview .header-title h3 {
+        margin: 1px 0;
+        font-size: 13px;
+        font-weight: normal;
+    }
+
+    .paper-preview .document-title {
+        text-transform: uppercase;
+        text-align: center;
+        margin: 20px 0;
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    /* Document Content - Matching printable.blade.php */
+    .paper-preview .document-content {
+        margin: 20px 0;
+        text-align: justify;
+        white-space: pre-line; /* Match printable.blade.php */
+        line-height: 1.6;
+        min-height: 300px;
+    }
+
+    /* Quill content styling in preview */
+    .paper-preview .document-content p {
+        margin: 0 0 10px 0;
+        text-align: justify;
+    }
+
+    .paper-preview .document-content .ql-indent-1 {
+        text-indent: 50px;
+    }
+
+    .paper-preview .document-content .ql-indent-2 {
+        text-indent: 100px;
+    }
+
+    .paper-preview .document-content .ql-align-center {
+        text-align: center;
+        text-indent: 0;
+    }
+
+    .paper-preview .document-content .ql-align-right {
+        text-align: right;
+        text-indent: 0;
+    }
+
+    .paper-preview .document-content .ql-align-left {
+        text-align: left;
+        text-indent: 0;
+    }
+
+    .paper-preview .document-content .ql-align-justify {
+        text-align: justify;
+    }
+
+    .paper-preview .document-content blockquote {
+        border: none;
+        padding-left: 0;
+        margin: 0 0 10px 0;
+        text-indent: 50px;
+        text-align: justify;
+    }
+
+    .paper-preview .document-content strong {
+        font-weight: bold;
+    }
+
+    .paper-preview .document-content em {
+        font-style: italic;
+    }
+
+    .paper-preview .document-content u {
+        text-decoration: underline;
+    }
+
+    /* Official Stamp Area - Matching printable.blade.php */
+    .paper-preview .official-stamp-area {
+        margin-top: 60px;
+        text-align: center;
+    }
+
+    .paper-preview .signature-line {
+        border-top: 1px solid #000;
+        width: 250px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    /* Print styles */
+    @media print {
+        .template-preview-container {
+            background: white;
+            padding: 0;
+        }
+
+        .paper-preview {
+            box-shadow: none;
+            margin: 0;
+        }
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+    function printPreview() {
+        const printContent = document.getElementById('template-preview').innerHTML;
+        const printWindow = window.open('', '_blank');
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Template Preview - {{ $documentType->name }}</title>
+                <meta charset="utf-8">
+                <style>
+                    @page {
+                        size: A4;
+                        margin: 15mm;
+                    }
+                    body {
+                        font-family: 'Times New Roman', Times, serif;
+                        font-size: 14px;
+                        line-height: 1.4;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .official-header {
+                        margin-bottom: 25px;
+                        border-bottom: 3px double #000;
+                        padding-bottom: 15px;
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 15px;
+                    }
+                    .barangay-seal {
+                        width: 90px;
+                        height: 90px;
+                        border: 2px solid #000;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        font-size: 10px;
+                        line-height: 1.2;
+                        text-align: center;
+                        flex-shrink: 0;
+                    }
+                    .header-content {
+                        flex: 1;
+                        text-align: center;
+                        padding-top: 5px;
+                    }
+                    .header-title {
+                        margin: 0;
+                        padding: 0;
+                        line-height: 1.2;
+                    }
+                    .header-title h2 {
+                        margin: 1px 0;
+                        font-size: 16px;
+                        font-weight: bold;
+                    }
+                    .header-title h3 {
+                        margin: 1px 0;
+                        font-size: 13px;
+                        font-weight: normal;
+                    }
+                    .document-title {
+                        text-transform: uppercase;
+                        text-align: center;
+                        margin: 20px 0;
+                        font-size: 16px;
+                        font-weight: bold;
+                        text-decoration: underline;
+                    }
+                    .document-content {
+                        margin: 20px 0;
+                        text-align: justify;
+                        white-space: pre-line;
+                        line-height: 1.6;
+                        min-height: 300px;
+                    }
+                    .document-content p {
+                        margin: 0 0 10px 0;
+                        text-align: justify;
+                    }
+                    .ql-indent-1 { text-indent: 50px; }
+                    .ql-indent-2 { text-indent: 100px; }
+                    .ql-align-center { text-align: center; text-indent: 0; }
+                    .ql-align-right { text-align: right; text-indent: 0; }
+                    .ql-align-left { text-align: left; text-indent: 0; }
+                    .ql-align-justify { text-align: justify; }
+                    blockquote {
+                        border: none;
+                        padding-left: 0;
+                        margin: 0 0 10px 0;
+                        text-indent: 50px;
+                        text-align: justify;
+                    }
+                    .official-stamp-area {
+                        margin-top: 60px;
+                        text-align: center;
+                    }
+                    .signature-line {
+                        border-top: 1px solid #000;
+                        width: 250px;
+                        margin: 0 auto;
+                        display: block;
+                    }
+                    strong { font-weight: bold; }
+                    em { font-style: italic; }
+                    u { text-decoration: underline; }
+                </style>
+            </head>
+            <body>
+                ${printContent}
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+        printWindow.focus();
+
+        setTimeout(function() {
+            printWindow.print();
+        }, 500);
+    }
+</script>
+@endpush
+
 @endsection

@@ -122,5 +122,13 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    // In config/app.php or create config/qr-code.php
+    'qr-code' => [
+        'writer' => 'png',
+        'size' => 300,
+        'margin' => 1,
+        'error_correction_level' => 'H',
+        'writer_options' => [],
+    ],
 
 ];

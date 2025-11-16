@@ -1,113 +1,139 @@
-{{-- resources/views/admin/dashboard.blade.php --}}
-@extends('layouts.app')
-@section('title','Barangay Captain Dashboard')
+@extends('layouts.barangay')
+
+@section('title', 'Municipality Admin Dashboard')
 
 @section('content')
-<h3 class="mb-4">Barangay Captain Dashboard</h3>
-
-{{-- ====== Top metric cards ====== --}}
-<div class="row g-4 mb-4">
-  <div class="col-xl-3 col-md-6">
-    <div class="card text-white bg-primary shadow-sm">
-      <div class="card-body text-center">
-        <h6>Total Residents</h6>
-        <h2>3,214</h2>
-      </div>
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3 mb-0">Municipality Admin Dashboard</h1>
+            <p class="text-muted">Complete system overview and management</p>
+        </div>
+        <div class="col-auto">
+            <div class="btn-group" role="group">
+               
+                <a href="{{ route('barangay.reports.index') }}" class="btn btn-outline-success">
+                    <i class="bi bi-file-earmark-text"></i> Reports
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="col-xl-3 col-md-6">
-    <div class="card text-white bg-success shadow-sm">
-      <div class="card-body text-center">
-        <h6>Approved Documents</h6>
-        <h2>1,045</h2>
-      </div>
+    <!-- System Alerts -->
+    @if(!empty($alerts))
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> System Alerts
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @forelse($alerts as $alert)
+                        <div class="d-flex justify-content-between align-items-center mb-2 alert alert-{{ $alert['type'] }}">
+                            <div>
+                                <strong>{{ $alert['title'] }}</strong><br>
+                                <small class="text-muted">{{ $alert['message'] }}</small>
+                            </div>
+                            @if(!empty($alert['action']))
+                                <a href="{{ $alert['action'] }}" class="btn btn-sm btn-outline-{{ $alert['type'] }}">
+                                    {{ $alert['action_text'] ?? 'View' }}
+                                </a>
+                            @endif
+                        </div>
+                        @if(!$loop->last)<hr>@endif
+                    @empty
+                        <p class="text-muted">No system alerts</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Business Permits -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Business Permits</h5>
+                </div>
+                <div class="card-body">
+                    @forelse($recentPermits as $permit)
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ $permit->business_name }}</strong><br>
+                                <small class="text-muted">{{ $permit->applicant->full_name }} - {{ $permit->barangay->name }}</small>
+                            </div>
+                            <span class="badge bg-{{ $permit->status_badge['class'] }}">
+                                {{ $permit->status_badge['text'] }}
+                            </span>
+                        </div>
+                        @if(!$loop->last)<hr>@endif
+                    @empty
+                        <p class="text-muted">No recent permits</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+    @endif
 
-  <div class="col-xl-3 col-md-6">
-    <div class="card text-white bg-warning shadow-sm">
-      <div class="card-body text-center">
-        <h6>Pending Requests</h6>
-        <h2>54</h2>
-      </div>
-    </div>
-  </div>
+    <!-- (keep your Terms Expiring Soon, Stats Cards, Charts, etc. as-is) -->
 
-  <div class="col-xl-3 col-md-6">
-    <div class="card text-white bg-danger shadow-sm">
-      <div class="card-body text-center">
-        <h6>Open Complaints</h6>
-        <h2>8</h2>
-      </div>
-    </div>
-  </div>
 </div>
 
-{{-- ====== Quick links ====== --}}
-<div class="row g-4 mb-4">
-  <div class="col-md-4">
-    <a href="{{ route('requests.index') }}" class="text-decoration-none">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body text-center">
-          <h4><i class="bi bi-file-earmark-text"></i></h4>
-          <h5 class="mt-2">Manage Requests</h5>
-          <p class="text-muted small mb-0">Approve or reject document applications.</p>
-        </div>
-      </div>
-    </a>
-  </div>
-  <div class="col-md-4">
-    <a href="{{ route('complaints.index') }}" class="text-decoration-none">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body text-center">
-          <h4><i class="bi bi-exclamation-circle"></i></h4>
-          <h5 class="mt-2">Handle Complaints</h5>
-          <p class="text-muted small mb-0">Assign or resolve community issues.</p>
-        </div>
-      </div>
-    </a>
-  </div>
-  <div class="col-md-4">
-    <a href="{{ route('reports.index') }}" class="text-decoration-none">
-      <div class="card h-100 shadow-sm">
-        <div class="card-body text-center">
-          <h4><i class="bi bi-bar-chart-line"></i></h4>
-          <h5 class="mt-2">View Reports</h5>
-          <p class="text-muted small mb-0">Generate monthly statistics and PDF exports.</p>
-        </div>
-      </div>
-    </a>
-  </div>
-</div>
-
-{{-- ====== Two sample tables ====== --}}
-<div class="row g-4">
-  <div class="col-lg-6">
-    <div class="card shadow-sm">
-      <div class="card-header bg-light fw-bold">Latest Pending Requests</div>
-      <table class="table mb-0">
-        <thead><tr><th>#</th><th>Resident</th><th>Type</th><th>Date</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>Maria Lopez</td><td>Clearance</td><td>Jul 16</td></tr>
-          <tr><td>2</td><td>Carlos Reyes</td><td>Business Permit</td><td>Jul 16</td></tr>
-          <tr><td>3</td><td>Ana Cruz</td><td>Indigency</td><td>Jul 15</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="col-lg-6">
-    <div class="card shadow-sm">
-      <div class="card-header bg-light fw-bold">Recent Complaints</div>
-      <table class="table mb-0">
-        <thead><tr><th>#</th><th>Resident</th><th>Issue</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>Juan Dela Cruz</td><td>Noise</td><td><span class="badge bg-warning">Pending</span></td></tr>
-          <tr><td>2</td><td>Rosa Flores</td><td>Sanitation</td><td><span class="badge bg-success">Resolved</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+@push('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const monthlyData = @json($monthlyData);
+    const ctx = document.getElementById('monthlyChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthlyData.map(item => item.month),
+            datasets: [
+                {
+                    label: 'Documents',
+                    data: monthlyData.map(item => item.documents),
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Complaints',
+                    data: monthlyData.map(item => item.complaints),
+                    borderColor: 'rgb(255, 193, 7)',
+                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Permits',
+                    data: monthlyData.map(item => item.permits),
+                    borderColor: 'rgb(40, 167, 69)',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'New Residents',
+                    data: monthlyData.map(item => item.residents),
+                    borderColor: 'rgb(220, 53, 69)',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: 'System Activity Over Time' }
+            },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+});
+</script>
+@endpush
 @endsection

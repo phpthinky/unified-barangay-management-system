@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Complaint;
+use App\Models\Announcement;
 use App\Policies\ComplaintPolicy;
+use App\Policies\AnnouncementPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -13,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Complaint::class => ComplaintPolicy::class,
+        Announcement::class => AnnouncementPolicy::class,
     ];
 
     /**

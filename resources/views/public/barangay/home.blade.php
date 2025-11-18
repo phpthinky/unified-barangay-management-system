@@ -66,6 +66,60 @@
     </div>
 </section>
 
+<!-- Announcements Section -->
+@if($announcements->count() > 0)
+<section class="py-5">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-5">
+            <i class="fas fa-bullhorn text-primary me-2"></i> Announcements
+        </h2>
+
+        <div class="row g-4">
+            @foreach($announcements as $announcement)
+            <div class="col-12">
+                <div class="card shadow-sm border-0 {{ $announcement->pin_to_top ? 'border-start border-primary border-4' : '' }}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    @if($announcement->pin_to_top)
+                                    <i class="fas fa-thumbtack text-primary me-2"></i>
+                                    @endif
+                                    <h5 class="mb-0 fw-bold">{{ $announcement->title }}</h5>
+                                </div>
+                                <div class="d-flex gap-2 mb-2 flex-wrap">
+                                    <span class="badge bg-{{ $announcement->getPriorityBadgeClass() }}">
+                                        <i class="fas fa-flag"></i> {{ ucfirst($announcement->priority) }}
+                                    </span>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar"></i> {{ $announcement->published_at?->format('F d, Y') ?? $announcement->created_at->format('F d, Y') }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-muted mb-0">{{ $announcement->getExcerpt(200) }}</p>
+
+                        @if(strlen(strip_tags($announcement->content)) > 200)
+                        <button class="btn btn-sm btn-link p-0 mt-2" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#announcement-{{ $announcement->id }}">
+                            Read more <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="collapse mt-2" id="announcement-{{ $announcement->id }}">
+                            <div class="card card-body bg-light">
+                                {!! nl2br(e($announcement->content)) !!}
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 <!-- Officials Section -->
 <section class="py-5 bg-light">
     <div class="container">

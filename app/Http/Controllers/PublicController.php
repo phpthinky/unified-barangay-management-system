@@ -144,14 +144,23 @@ class PublicController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Get active announcements for public
+        $announcements = \App\Models\Announcement::where('barangay_id', $barangay->id)
+            ->published()
+            ->where('show_on_public', true)
+            ->ordered()
+            ->limit(5)
+            ->get();
+
         return view('public.barangay.home', compact(
-            'barangay', 
-            'stats', 
+            'barangay',
+            'stats',
             'captain',
             'councilors',
             'secretary',
             'treasurer',
             'staff',
+            'announcements',
             'luponMembers'
         ));
     }

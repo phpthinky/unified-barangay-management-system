@@ -387,7 +387,16 @@ Route::middleware('auth')->group(function () {
         // Complaint & Permit Types
         Route::resource('complaint-types', ComplaintTypeController::class);
         Route::resource('business-permit-types', BusinessPermitTypeController::class);
-        
+
+        // Announcements (Captain & Secretary only)
+        Route::resource('announcements', \App\Http\Controllers\Barangay\AnnouncementController::class);
+        Route::patch('announcements/{announcement}/publish', [\App\Http\Controllers\Barangay\AnnouncementController::class, 'publish'])
+             ->name('announcements.publish');
+        Route::patch('announcements/{announcement}/archive', [\App\Http\Controllers\Barangay\AnnouncementController::class, 'archive'])
+             ->name('announcements.archive');
+        Route::patch('announcements/{announcement}/toggle-pin', [\App\Http\Controllers\Barangay\AnnouncementController::class, 'togglePin'])
+             ->name('announcements.toggle-pin');
+
     });
 
     /*

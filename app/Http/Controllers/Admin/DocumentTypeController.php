@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DocumentType;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentTypeController extends Controller
 {
@@ -122,7 +123,16 @@ class DocumentTypeController extends Controller
                                     ->take(10)
                                     ->get();
 
-        return view('admin.document-types.show', compact('documentType', 'stats', 'recentRequests'));
+        $user = Auth::user();
+        $barangay = $user->barangay;
+        if (empty($barangay->logo)) {
+            // code...
+            $barangay->logo = 'images/barangay-seal.png';
+        }else{
+            $barangay->logo = 'uploads/logos/'.$barangay->logo;
+
+        }
+        return view('admin.document-types.show', compact('documentType', 'stats', 'recentRequests','barangay'));
     }
 
     public function edit(DocumentType $documentType)

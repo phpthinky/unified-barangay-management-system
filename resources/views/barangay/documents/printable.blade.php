@@ -107,6 +107,20 @@
             flex-shrink: 0;
         }
         
+        .barangay-seal img{
+            width: 90px;
+            height: 90px;
+            border: 2px solid #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 10px;
+            line-height: 1.2;
+            text-align: center;
+            flex-shrink: 0;
+        }
         .header-content {
             flex: 1;
             text-align: center;
@@ -279,9 +293,7 @@
         <div class="document-body">
             <div class="official-header">
                 <div class="barangay-seal">
-                    OFFICIAL SEAL<br>
-                    BARANGAY<br>
-                    {{ strtoupper($documentRequest->barangay->name) }}
+                    <img src="$documentRequest->barangay->logo">
                 </div>
                 <div class="header-content">
                     <div class="header-title">

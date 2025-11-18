@@ -373,7 +373,7 @@
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0"><i class="fas fa-eye"></i> Template Preview</h5>
             <div>
-                <button class="btn btn-sm btn-light" onclick="printPreview()">
+                <button class="btn btn-sm btn-light d-none" onclick="printPreview()">
                     <i class="fas fa-print"></i> Print Preview
                 </button>
                 <a href="{{ route('barangay.document-types.template', $documentType) }}" class="btn btn-sm btn-warning">
@@ -388,16 +388,14 @@
                     <!-- Official Header (matching printable.blade.php) -->
                     <div class="official-header">
                         <div class="barangay-seal">
-                            OFFICIAL SEAL<br>
-                            BARANGAY<br>
-                            POBLACION
+                            <img src="{{ asset($barangay->logo) }}">
                         </div>
                         <div class="header-content">
                             <div class="header-title">
                                 <h2>REPUBLIC OF THE PHILIPPINES</h2>
                                 <h3>PROVINCE OF OCCIDENTAL MINDORO</h3>
                                 <h3>MUNICIPALITY OF SABLAYAN</h3>
-                                <h2>BARANGAY POBLACION</h2>
+                                <h2>BARANGAY {{ strtoupper($barangay->name) }}</h2>
                             </div>
                             <h3 class="document-title"><u>{{ strtoupper($documentType->name) }}</u></h3>
                         </div>
@@ -408,7 +406,7 @@
                         {!! $documentType->getRenderedTemplate() !!}
                     </div>
 
-                    <!-- Official Stamp Area -->
+                    <!-- Official Stamp Area --/>
                     <div class="official-stamp-area">
                         <div style="margin-bottom: 60px;"></div>
                         <strong>MARIA SANTOS</strong><br>
@@ -416,7 +414,7 @@
                         Barangay Poblacion<br>
                         <span class="signature-line"></span>
                         <p style="margin-top: 5px; font-size: 11px;">(Signature over Printed Name)</p>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -511,7 +509,7 @@
     .paper-preview .barangay-seal {
         width: 90px;
         height: 90px;
-        border: 2px solid #000;
+        border: 1px solid #000;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -523,6 +521,19 @@
         flex-shrink: 0;
     }
 
+    .paper-preview .barangay-seal img{
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 10px;
+        line-height: 1.2;
+        text-align: center;
+        flex-shrink: 0;
+    }
     .paper-preview .header-content {
         flex: 1;
         text-align: center;

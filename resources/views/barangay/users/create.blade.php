@@ -314,21 +314,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const termStartInput = document.getElementById('term_start');
     const termEndInput = document.getElementById('term_end');
     
-    const termRoles = ['barangay-councilor', 'barangay-secretary'];
-    
+    const termRoles = ['barangay-secretary'];
+
     function toggleFields() {
         const selectedRole = roleSelect.value;
-        
-        // Toggle councilor fields
-        if (selectedRole === 'barangay-councilor') {
-            councilorFields.style.display = 'block';
-            document.getElementById('councilor_number').required = true;
-            document.getElementById('committee').required = true;
-        } else {
-            councilorFields.style.display = 'none';
-            document.getElementById('councilor_number').required = false;
-            document.getElementById('committee').required = false;
-        }
+
+        // Councilor fields removed - officials are now managed via organizational chart
+        councilorFields.style.display = 'none';
+        document.getElementById('councilor_number').required = false;
+        document.getElementById('committee').required = false;
         
         // Toggle term fields
         if (termRoles.includes(selectedRole)) {

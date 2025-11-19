@@ -313,8 +313,8 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
-    const barangayRoles = ['barangay-captain', 'barangay-councilor', 'barangay-secretary', 'barangay-treasurer', 'barangay-staff', 'lupon-member'];
-    const termRoles = ['abc-president', 'barangay-captain', 'barangay-councilor', 'barangay-secretary'];
+    const barangayRoles = ['barangay-captain', 'barangay-secretary', 'barangay-treasurer', 'barangay-staff', 'lupon-member'];
+    const termRoles = ['abc-president', 'barangay-captain', 'barangay-secretary'];
 
     function updateFormFields() {
         const selectedRole = $('#role').val();
@@ -327,13 +327,9 @@ $(document).ready(function() {
             $('#barangay_id').prop('required', false);
         }
 
-        if (selectedRole === 'barangay-councilor') {
-            $('#councilor-fields').show();
-            $('#councilor-fields select').prop('required', true);
-        } else {
-            $('#councilor-fields').hide();
-            $('#councilor-fields select').prop('required', false);
-        }
+        // Councilor fields removed - officials are now managed via organizational chart
+        $('#councilor-fields').hide();
+        $('#councilor-fields select').prop('required', false);
 
         if (termRoles.includes(selectedRole)) {
             $('#term-fields').show();

@@ -92,56 +92,10 @@ class PublicController extends Controller
                             ->count(),
         ];
 
-        // Get officials organized by hierarchy - using correct role names and relationships
-        $captain = $barangay->users()
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'barangay-captain');
-            })
-            ->where('is_active', true)
-            ->where('is_archived', false)
-            ->first();
-
-        $councilors = $barangay->users()
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'barangay-councilor');
-            })
-            ->where('is_active', true)
-            ->where('is_archived', false)
-            ->orderBy('councilor_number')
-            ->get();
-
-        $secretary = $barangay->users()
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'barangay-secretary');
-            })
-            ->where('is_active', true)
-            ->where('is_archived', false)
-            ->first();
-
-        $treasurer = $barangay->users()
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'barangay-treasurer');
-            })
-            ->where('is_active', true)
-            ->where('is_archived', false)
-            ->first();
-
-        // Get other staff (excluding captain, councilors, secretary, treasurer)
-        $staff = $barangay->users()
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'barangay-staff');
-            })
-            ->where('is_active', true)
-            ->where('is_archived', false)
-            ->get();
-
-        $luponMembers = $barangay->users()
-            ->whereHas('roles', function($query) {
-                $query->where('name', 'lupon-member');
-            })
-            ->where('is_active', true)
-            ->where('is_archived', false)
-            ->orderBy('name')
+        // Get barangay officials from organizational chart (new system)
+        $officials = \App\Models\BarangayOfficial::where('barangay_id', $barangay->id)
+            ->active()
+            ->ordered()
             ->get();
 
         // Get active announcements for public
@@ -155,13 +109,8 @@ class PublicController extends Controller
         return view('public.barangay.home', compact(
             'barangay',
             'stats',
-            'captain',
-            'councilors',
-            'secretary',
-            'treasurer',
-            'staff',
-            'announcements',
-            'luponMembers'
+            'officials',
+            'announcements'
         ));
     }
 

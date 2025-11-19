@@ -195,6 +195,9 @@ Route::middleware('auth')->group(function () {
         Route::post('barangays/{barangay}/generate-qr', [AbcBarangayController::class, 'generateQr'])->name('barangays.generate-qr');
         Route::get('barangays/{barangay}/qr-inline', [AbcBarangayController::class, 'getQrCodeInline'])->name('barangays.qr-inline');
 
+        // Barangay Officials Management (Organizational Chart)
+        Route::resource('barangay-officials', \App\Http\Controllers\Admin\BarangayOfficialController::class)->names('barangay-officials');
+
         // User Management
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [AbcUserController::class, 'index'])->name('index');

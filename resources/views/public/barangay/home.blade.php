@@ -120,227 +120,65 @@
 </section>
 @endif
 
-<!-- Officials Section -->
+<!-- Officials Section - Organizational Chart -->
 <section class="py-5 bg-light">
     <div class="container">
         <h2 class="fw-bold text-center mb-5">
-            <i class="fas fa-user-tie text-primary me-2"></i> Barangay Officials
+            <i class="fas fa-sitemap text-primary me-2"></i> Barangay Organizational Chart
         </h2>
-        
-        <!-- Barangay Captain -->
-        @if($captain)
-        <div class="row mb-5">
-            <div class="col-12">
-                <h4 class="text-center mb-4 text-primary">Barangay Captain</h4>
-                <div class="card border-0 shadow-lg mx-auto" style="max-width: 400px;">
-                    <div class="card-body text-center p-4">
-                        <div class="mb-3">
-                            @if($captain->avatar)
-                                <img src="{{ asset('storage/' . $captain->avatar) }}" 
-                                     alt="{{ $captain->name }}" 
-                                     class="rounded-circle" 
-                                     style="width: 120px; height: 120px; object-fit: cover;">
-                            @else
-                                <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center" 
-                                     style="width: 120px; height: 120px;">
-                                    <i class="fas fa-user text-white fa-3x"></i>
-                                </div>
+
+        @if($officials->count() > 0)
+            <div class="row g-4 justify-content-center">
+                @foreach($officials as $official)
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body text-center p-4">
+                            <div class="mb-3">
+                                @if($official->avatar)
+                                    <img src="{{ asset('storage/' . $official->avatar) }}"
+                                         alt="{{ $official->name }}"
+                                         class="rounded-circle"
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center"
+                                         style="width: 100px; height: 100px;">
+                                        <i class="fas fa-user text-muted fa-3x"></i>
+                                    </div>
+                                @endif
+                            </div>
+                            <h6 class="fw-bold mb-1">{{ $official->name }}</h6>
+                            <span class="badge bg-{{ $official->getPositionBadgeClass() }} mb-2">
+                                {{ $official->position }}
+                            </span>
+                            @if($official->committee)
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-briefcase"></i> {{ $official->committee }}
+                            </p>
+                            @endif
+                            @if($official->contact_number)
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-phone"></i> {{ $official->contact_number }}
+                            </p>
+                            @endif
+                            <p class="text-xs text-muted mb-0">
+                                <i class="fas fa-calendar"></i> {{ $official->term_start->format('Y') }} - {{ $official->term_end->format('Y') }}
+                            </p>
+                            @if($official->description)
+                            <p class="text-muted small mt-2 mb-0">
+                                {{ \Illuminate\Support\Str::limit($official->description, 80) }}
+                            </p>
                             @endif
                         </div>
-                        <h5 class="fw-bold mb-1">Hon. {{ $captain->name }}</h5>
-                        <p class="text-muted mb-2">Barangay Captain</p>
-                        @if($captain->term_start && $captain->term_end)
-                        <p class="text-sm text-muted">
-                            Term: {{ $captain->term_start->format('Y') }} - {{ $captain->term_end->format('Y') }}
-                        </p>
-                        @endif
                     </div>
                 </div>
+                @endforeach
             </div>
-        </div>
-        @endif
-
-        <!-- Barangay Councilors -->
-        @if($councilors->count() > 0)
-        <div class="row mb-5">
-            <div class="col-12">
-                <h4 class="text-center mb-4 text-success">Barangay Councilors</h4>
-                <div class="row g-4">
-                    @foreach($councilors as $councilor)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    @if($councilor->avatar)
-                                        <img src="{{ asset('storage/' . $councilor->avatar) }}" 
-                                             alt="{{ $councilor->name }}" 
-                                             class="rounded-circle" 
-                                             style="width: 80px; height: 80px; object-fit: cover;">
-                                    @else
-                                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
-                                             style="width: 80px; height: 80px;">
-                                            <i class="fas fa-user text-muted fa-2x"></i>
-                                        </div>
-                                    @endif
-                                </div>
-                                <h6 class="fw-bold mb-1">Kagawad {{ $councilor->name }}</h6>
-                                <p class="text-muted small mb-2">
-                                    {{ $councilor->committee_display ?? 'Barangay Councilor' }}
-                                </p>
-                                @if($councilor->term_start && $councilor->term_end)
-                                <p class="text-xs text-muted">
-                                    Term: {{ $councilor->term_start->format('Y') }} - {{ $councilor->term_end->format('Y') }}
-                                </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
+        @else
+            <div class="text-center py-5">
+                <i class="fas fa-sitemap fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No organizational chart available</h5>
+                <p class="text-muted">The organizational chart will be displayed here once officials are added.</p>
             </div>
-        </div>
-        @endif
-
-        <!-- Barangay Staff -->
-        @if($staff->count() > 0 || $secretary || $treasurer)
-        <div class="row mb-5">
-            <div class="col-12">
-                <h4 class="text-center mb-4 text-purple">Barangay Staff</h4>
-                <div class="row g-4">
-                    <!-- Secretary -->
-                    @if($secretary)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    @if($secretary->avatar)
-                                        <img src="{{ asset('storage/' . $secretary->avatar) }}" 
-                                             alt="{{ $secretary->name }}" 
-                                             class="rounded-circle" 
-                                             style="width: 80px; height: 80px; object-fit: cover;">
-                                    @else
-                                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
-                                             style="width: 80px; height: 80px;">
-                                            <i class="fas fa-user text-muted fa-2x"></i>
-                                        </div>
-                                    @endif
-                                </div>
-                                <h6 class="fw-bold mb-1">{{ $secretary->name }}</h6>
-                                <p class="text-muted small mb-2">Barangay Secretary</p>
-                                @if($secretary->term_start && $secretary->term_end)
-                                <p class="text-xs text-muted">
-                                    Term: {{ $secretary->term_start->format('Y') }} - {{ $secretary->term_end->format('Y') }}
-                                </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Treasurer -->
-                    @if($treasurer)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    @if($treasurer->avatar)
-                                        <img src="{{ asset('storage/' . $treasurer->avatar) }}" 
-                                             alt="{{ $treasurer->name }}" 
-                                             class="rounded-circle" 
-                                             style="width: 80px; height: 80px; object-fit: cover;">
-                                    @else
-                                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
-                                             style="width: 80px; height: 80px;">
-                                            <i class="fas fa-user text-muted fa-2x"></i>
-                                        </div>
-                                    @endif
-                                </div>
-                                <h6 class="fw-bold mb-1">{{ $treasurer->name }}</h6>
-                                <p class="text-muted small mb-2">Barangay Treasurer</p>
-                                @if($treasurer->term_start && $treasurer->term_end)
-                                <p class="text-xs text-muted">
-                                    Term: {{ $treasurer->term_start->format('Y') }} - {{ $treasurer->term_end->format('Y') }}
-                                </p>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-
-                    <!-- Other Staff -->
-                    @foreach($staff as $member)
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-4">
-                                <div class="mb-3">
-                                    @if($member->avatar)
-                                        <img src="{{ asset('storage/' . $member->avatar) }}" 
-                                             alt="{{ $member->name }}" 
-                                             class="rounded-circle" 
-                                             style="width: 80px; height: 80px; object-fit: cover;">
-                                    @else
-                                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
-                                             style="width: 80px; height: 80px;">
-                                            <i class="fas fa-user text-muted fa-2x"></i>
-                                        </div>
-                                    @endif
-                                </div>
-                                <h6 class="fw-bold mb-1">{{ $member->name }}</h6>
-                                <p class="text-muted small mb-2">
-                                    {{ $member->position_title ?? 'Barangay Staff' }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-        <!-- Lupon Members -->
-        @if($luponMembers->count() > 0)
-        <div class="row">
-            <div class="col-12">
-                <h4 class="text-center mb-4 text-warning">Lupon ng Tagapamayapa</h4>
-                <div class="row g-4">
-                    @foreach($luponMembers as $lupon)
-                    <div class="col-lg-3 col-md-4 col-sm-6">
-                        <div class="card border-0 shadow-sm h-100">
-                            <div class="card-body text-center p-3">
-                                <div class="mb-2">
-                                    @if($lupon->avatar)
-                                        <img src="{{ asset('storage/' . $lupon->avatar) }}" 
-                                             alt="{{ $lupon->name }}" 
-                                             class="rounded-circle" 
-                                             style="width: 60px; height: 60px; object-fit: cover;">
-                                    @else
-                                        <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" 
-                                             style="width: 60px; height: 60px;">
-                                            <i class="fas fa-user text-muted"></i>
-                                        </div>
-                                    @endif
-                                </div>
-                                <h6 class="fw-bold mb-1 small">{{ $lupon->name }}</h6>
-                                <p class="text-muted small mb-0">
-                                    {{ $lupon->position_title ?? 'Lupon Member' }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-        @endif
-
-        <!-- No Officials Message -->
-        @if(!$captain && $councilors->count() === 0 && $staff->count() === 0 && $luponMembers->count() === 0)
-        <div class="text-center py-5">
-            <i class="fas fa-user-tie fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No officials listed for this barangay.</h5>
-            <p class="text-muted">Please check back later for updates.</p>
-        </div>
         @endif
 
     </div>

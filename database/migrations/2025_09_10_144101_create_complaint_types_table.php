@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('complaint_types', function (Blueprint $table) {
@@ -20,7 +17,7 @@ return new class extends Migration
             $table->enum('default_handler_type', ['captain', 'secretary', 'lupon', 'any_staff'])->default('secretary');
             $table->boolean('requires_hearing')->default(false);
             $table->integer('estimated_resolution_days')->default(15);
-            $table->json('required_information')->nullable(); // Fields needed for this complaint type
+            $table->json('required_information')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
@@ -29,9 +26,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('complaint_types');

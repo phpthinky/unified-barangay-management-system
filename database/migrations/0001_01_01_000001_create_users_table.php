@@ -1,5 +1,4 @@
 <?php
-// FILE: database/migrations/YYYY_MM_DD_000001_create_users_table_complete.php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -11,63 +10,50 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            
-            // Core Identity
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('email_verification_token', 6)->nullable();
+            $table->timestamp('email_verification_token_expires_at')->nullable();
+            $table->integer('email_verification_attempts')->default(0);
+            $table->timestamp('email_verification_last_sent_at')->nullable();
             $table->string('password');
-            
-            // Barangay Association
-            $table->foreignId('barangay_id')->nullable()->constrained()->onDelete('set null');
-            
-            // Name Components
+            $table->foreignId('barangay_id')->nullable()->constrained()->nullOnDelete();
             $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('suffix')->nullable();
-            
-            // Contact Information
             $table->string('contact_number')->nullable();
             $table->date('birth_date')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->text('address')->nullable();
-            
-            // Profile & Media
             $table->string('profile_photo')->nullable();
-            $table->string('avatar')->nullable(); // For officials
-            
-            // Account Status
+            $table->string('avatar')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();
-            
-            // Staff/Employee Fields
+            $table->timestamp('last_activity_at')->nullable();
             $table->string('employee_id')->nullable();
             $table->string('position_title')->nullable();
-            
-            // Official Fields (Councilors, Captain, etc.)
             $table->date('term_start')->nullable();
             $table->date('term_end')->nullable();
-            $table->string('committee')->nullable(); // For councilors
-            $table->integer('councilor_number')->nullable(); // For councilors
-            
-            // Archive System
+            $table->string('committee')->nullable();
+            $table->integer('councilor_number')->nullable();
             $table->boolean('is_archived')->default(false);
             $table->timestamp('archived_at')->nullable();
-            $table->foreignId('archived_by')->nullable()
-                  ->constrained('users')
-                  ->onDelete('set null');
-            
-            // Tokens
+            $table->foreignId('archived_by')->nullable()->constrained('users')->nullOnDelete();
             $table->rememberToken();
+            $table->string('session_token')->nullable();
+            $table->boolean('is_logged_in')->default(false);
             $table->timestamps();
             $table->softDeletes();
             
-            // Indexes
             $table->index(['barangay_id', 'is_active']);
-            $table->index(['is_archived']);
-            $table->index(['archived_at']);
+            $table->index('is_archived');
+            $table->index('archived_at');
             $table->index(['last_name', 'first_name']);
+            $table->index('email_verification_token');
+            $table->index('session_token');
+            $table->index('is_logged_in');
         });
     }
 

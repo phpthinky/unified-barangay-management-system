@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('barangays', function (Blueprint $table) {
@@ -23,7 +20,7 @@ return new class extends Migration
             $table->string('qr_code')->nullable();
             $table->string('public_url')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->json('social_media')->nullable(); // Facebook, etc.
+            $table->json('social_media')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();
@@ -32,9 +29,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('barangays');

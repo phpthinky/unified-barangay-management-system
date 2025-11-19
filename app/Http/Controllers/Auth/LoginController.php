@@ -13,10 +13,26 @@ class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
+    /**
+     * Disable the intended redirect to avoid expired page issues
+     */
+    protected $redirectTo = '/';
+
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
+    }
+
+    /**
+     * Show the login form and clear any intended redirects
+     */
+    public function showLoginForm()
+    {
+        // Clear the intended URL to avoid redirecting to expired pages
+        session()->forget('url.intended');
+
+        return view('auth.login');
     }
 
     /**

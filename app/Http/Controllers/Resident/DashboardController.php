@@ -121,6 +121,13 @@ class DashboardController extends Controller
         // Quick actions available to resident
         $quickActions = $this->getQuickActions($residentProfile);
 
+        // Get active announcements for this barangay
+        $announcements = \App\Models\Announcement::where('barangay_id', $user->barangay_id)
+            ->published()
+            ->ordered()
+            ->limit(3)
+            ->get();
+
         return view('resident.dashboard', compact(
             'user',
             'residentProfile',
@@ -131,7 +138,8 @@ class DashboardController extends Controller
             'availableServices',
             'alerts',
             'monthlyActivity',
-            'quickActions'
+            'quickActions',
+            'announcements'
         ));
     }
 

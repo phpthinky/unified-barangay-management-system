@@ -159,6 +159,58 @@
         </div>
     </div>
 
+    <!-- Announcements -->
+    @if($announcements->count() > 0)
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bullhorn"></i> Barangay Announcements
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @foreach($announcements as $announcement)
+                    <div class="alert alert-{{ $announcement->getPriorityBadgeClass() }} border-start border-{{ $announcement->getPriorityBadgeClass() }} border-3 {{ !$loop->last ? 'mb-3' : 'mb-0' }}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    @if($announcement->pin_to_top)
+                                    <i class="fas fa-thumbtack me-2"></i>
+                                    @endif
+                                    <h6 class="mb-0 fw-bold">{{ $announcement->title }}</h6>
+                                </div>
+                                <p class="mb-2">{{ $announcement->getExcerpt(150) }}</p>
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar"></i> {{ $announcement->published_at?->format('M d, Y') ?? $announcement->created_at->format('M d, Y') }}
+                                    @if($announcement->priority !== 'normal')
+                                    • <span class="badge bg-{{ $announcement->getPriorityBadgeClass() }}">{{ ucfirst($announcement->priority) }}</span>
+                                    @endif
+                                </small>
+
+                                @if(strlen(strip_tags($announcement->content)) > 150)
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#announcement-{{ $announcement->id }}">
+                                        Read more <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                                <div class="collapse mt-2" id="announcement-{{ $announcement->id }}">
+                                    <div class="card card-body">
+                                        {!! nl2br(e($announcement->content)) !!}
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Pending Items -->
     @if(!empty(array_filter($pendingItems, function($item) { return is_countable($item) ? count($item) > 0 : $item; })))
     <div class="row mb-4">

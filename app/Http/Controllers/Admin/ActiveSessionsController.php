@@ -76,8 +76,8 @@ class ActiveSessionsController extends Controller
      */
     public function forceLogout(User $user)
     {
-        // Check permission
-        if (!auth()->user()->hasRole('municipality-admin')) {
+        // Check permission (ABC President)
+        if (!auth()->user()->hasRole('abc-president')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -101,6 +101,11 @@ class ActiveSessionsController extends Controller
      */
     public function forceLogoutMultiple(Request $request)
     {
+        // Check permission (ABC President)
+        if (!auth()->user()->hasRole('abc-president')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'user_ids' => 'required|array',
             'user_ids.*' => 'exists:users,id',
@@ -128,6 +133,11 @@ class ActiveSessionsController extends Controller
      */
     public function clearInactive(Request $request)
     {
+        // Check permission (ABC President)
+        if (!auth()->user()->hasRole('abc-president')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $minutes = $request->get('minutes', 30);
 
         $inactiveUsers = User::where('is_logged_in', true)

@@ -36,6 +36,37 @@ class LoginController extends Controller
     }
 
     /**
+     * Override redirect path to prevent using intended URL
+     */
+    public function redirectPath()
+    {
+        // Always clear intended URL to prevent redirect to expired pages
+        session()->forget('url.intended');
+
+        // Return default path - will be overridden by authenticated() method
+        return $this->redirectTo ?? '/';
+    }
+
+    /**
+     * Override send login response to clear intended URL
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+        // Clear intended URL before sending response
+        $request->session()->forget('url.intended');
+
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        if ($response = $this->authenticated($request, $this->guard()->user())) {
+            return $response;
+        }
+
+        return redirect()->intended($this->redirectPath());
+    }
+
+    /**
      * ✅ Simple login - No double-login check
      */
     protected function authenticated(Request $request, $user)

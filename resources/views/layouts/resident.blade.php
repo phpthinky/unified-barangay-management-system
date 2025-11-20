@@ -218,40 +218,39 @@
                         </ul>
                     </li>
                 @endif
-                
-            <li class="sidebar-divider"></li>
-        <li class="sidebar-user-info">
-            <div class="px-3 py-2 text-light">
-                <div class="d-flex align-items-center mb-1">
-                    <i class="bi bi-person-circle me-2"></i>
-                    <strong>{{ auth()->user()->name }}</strong>
-                </div>
-                <small class="text-white d-block ps-4">
-                    {{ auth()->user()->getRoleNames()->first() ? ucwords(str_replace('-', ' ', auth()->user()->getRoleNames()->first())) : 'User' }}
-                </small>
-            </div>
-        </li>
-        <li class="sidebar-divider"></li>
 
-        <!-- Profile & Logout -->
-        <li class="sidebar-nav-item">
-            <a href="{{ route('profile') }}" class="sidebar-nav-link">
-                <i class="bi bi-person"></i> Account Setting
-            </a>
-        </li>
-        
-        <li class="sidebar-nav-item">
-            <a class="sidebar-nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-        </li>
-    @else
-        <li class="sidebar-nav-item">
-            <a href="{{ route('login') }}" class="sidebar-nav-link">
-                <i class="bi bi-box-arrow-right"></i> Login
-            </a>
-        </li>
+                <li class="sidebar-divider"></li>
+                <li class="sidebar-user-info">
+                    <div class="px-3 py-2 text-light">
+                        <div class="d-flex align-items-center mb-1">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <strong>{{ auth()->user()->name }}</strong>
+                        </div>
+                        <small class="text-white d-block ps-4">
+                            {{ auth()->user()->getRoleNames()->first() ? ucwords(str_replace('-', ' ', auth()->user()->getRoleNames()->first())) : 'User' }}
+                        </small>
+                    </div>
+                </li>
+                <li class="sidebar-divider"></li>
 
+                <!-- Profile & Logout -->
+                <li class="sidebar-nav-item">
+                    <a href="{{ route('resident.profile') }}" class="sidebar-nav-link {{ request()->routeIs('resident.profile') ? 'active' : '' }}">
+                        <i class="bi bi-person"></i> Account Setting
+                    </a>
+                </li>
+
+                <li class="sidebar-nav-item">
+                    <a class="sidebar-nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </li>
+            @else
+                <li class="sidebar-nav-item">
+                    <a href="{{ route('login') }}" class="sidebar-nav-link">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                </li>
             @endauth
         </ul>
 

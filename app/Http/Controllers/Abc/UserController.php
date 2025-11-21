@@ -90,12 +90,10 @@ class UserController extends Controller
     {
         $barangays = Barangay::active()->orderBy('name')->get();
         $roles = Role::whereIn('name', [
-            'municipality-admin', 
-            'abc-president', 
-            'barangay-captain', 
-            'barangay-councilor',
+            'abc-president',
+            'barangay-captain',
             'barangay-secretary',
-            'barangay-staff', 
+            'barangay-staff',
             'lupon-member'
         ])->orderBy('name')->get();
         
@@ -162,21 +160,6 @@ class UserController extends Controller
             if ($existingCaptain) {
                 return redirect()->back()
                                ->withErrors(['role' => 'This barangay already has an active captain.'])
-                               ->withInput();
-            }
-        }
-
-        if ($request->role === 'barangay-councilor' && $request->barangay_id) {
-            $existingCouncilor = User::where('barangay_id', $request->barangay_id)
-                                    ->role('barangay-councilor')
-                                    ->where('councilor_number', $request->councilor_number)
-                                    ->where('is_active', true)
-                                    ->where('is_archived', false)
-                                    ->first();
-
-            if ($existingCouncilor) {
-                return redirect()->back()
-                               ->withErrors(['councilor_number' => 'This councilor number is already assigned to another active councilor in this barangay.'])
                                ->withInput();
             }
         }
@@ -256,13 +239,10 @@ class UserController extends Controller
     {
         $barangays = Barangay::active()->orderBy('name')->get();
         $roles = Role::whereIn('name', [
-            'municipality-admin', 
-            'abc-president', 
-            'barangay-captain', 
-            'barangay-councilor',
+            'abc-president',
+            'barangay-captain',
             'barangay-secretary',
-            'barangay-treasurer',
-            'barangay-staff', 
+            'barangay-staff',
             'lupon-member'
         ])->orderBy('name')->get();
         

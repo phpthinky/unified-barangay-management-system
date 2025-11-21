@@ -31,9 +31,7 @@ class BarangayUserController extends Controller
                     ->with(['roles'])
                     ->whereHas('roles', function($roleQuery) {
                         $roleQuery->whereIn('name', [
-                            'barangay-councilor',
                             'barangay-secretary',
-                            'barangay-treasurer',
                             'barangay-staff',
                             'lupon-member'
                         ]);
@@ -68,9 +66,7 @@ class BarangayUserController extends Controller
                       ->appends($request->query());
 
         $roles = Role::whereIn('name', [
-            'barangay-councilor',
             'barangay-secretary',
-            'barangay-treasurer',
             'barangay-staff',
             'lupon-member'
         ])->orderBy('name')->get();
@@ -78,18 +74,14 @@ class BarangayUserController extends Controller
         $stats = [
             'total_staff' => User::where('barangay_id', $barangay->id)
                 ->whereHas('roles', function($q) {
-                    $q->whereIn('name', ['barangay-councilor', 'barangay-secretary', 'barangay-treasurer', 'barangay-staff', 'lupon-member']);
+                    $q->whereIn('name', ['barangay-secretary', 'barangay-staff', 'lupon-member']);
                 })->count(),
             'active_staff' => User::where('barangay_id', $barangay->id)
                 ->whereHas('roles', function($q) {
-                    $q->whereIn('name', ['barangay-councilor', 'barangay-secretary', 'barangay-treasurer', 'barangay-staff', 'lupon-member']);
+                    $q->whereIn('name', ['barangay-secretary', 'barangay-staff', 'lupon-member']);
                 })
                 ->where('is_active', true)
                 ->where('is_archived', false)
-                ->count(),
-            'councilors' => User::where('barangay_id', $barangay->id)
-                ->role('barangay-councilor')
-                ->where('is_active', true)
                 ->count(),
             'lupon_members' => User::where('barangay_id', $barangay->id)
                 ->role('lupon-member')
@@ -110,8 +102,8 @@ class BarangayUserController extends Controller
         }
 
         // Only allow captain to create certain roles
-        $allowedRoles = ['barangay-councilor', 'barangay-secretary', 'barangay-treasurer', 'barangay-staff', 'lupon-member'];
-        
+        $allowedRoles = ['barangay-secretary', 'barangay-staff', 'lupon-member'];
+
         // If user is secretary, restrict role creation
         if ($user->hasRole('barangay-secretary')) {
             $allowedRoles = ['barangay-staff', 'lupon-member'];

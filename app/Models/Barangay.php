@@ -217,7 +217,7 @@ class Barangay extends Model
     {
         return $this->hasMany(User::class)
                    ->whereHas('roles', function ($query) {
-                       $query->where('name', 'lupon');
+                       $query->where('name', 'lupon-member');
                    })
                    ->where('is_active', true)
                    ->where('is_archived', false);

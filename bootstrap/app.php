@@ -69,19 +69,30 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // Custom exception handling for UBMS
+
+        // Handle 419 CSRF Token Mismatch - redirect to public index
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Your session has expired. Please refresh and try again.'], 419);
+            }
+
+            // Redirect to public homepage with message
+            return redirect()->route('home')->with('warning', 'Your session has expired. Please login again if needed.');
+        });
+
         $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Insufficient permissions.'], 403);
             }
-            
+
             return redirect()->route('dashboard')->with('error', 'You do not have permission to access that resource.');
         });
-        
+
         $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthenticated.'], 401);
             }
-            
+
             return redirect()->route('login');
         });
     })

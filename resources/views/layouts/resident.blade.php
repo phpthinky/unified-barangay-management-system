@@ -235,7 +235,7 @@
 
                 <!-- Profile & Logout -->
                 <li class="sidebar-nav-item">
-                    <a href="{{ route('resident.profile') }}" class="sidebar-nav-link {{ request()->routeIs('resident.profile') ? 'active' : '' }}">
+                    <a href="{{ route('resident.profile.show') }}" class="sidebar-nav-link {{ request()->routeIs('resident.profile.*') ? 'active' : '' }}">
                         <i class="bi bi-person"></i> Account Setting
                     </a>
                 </li>
